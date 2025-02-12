@@ -1,6 +1,8 @@
-# web-app
+# tz
 
-A web version of the _tz_ app.
+See where you are in time. Available on the web or standalone.
+
+Inspired by [esx](http://www.xdesksoftware.com/esx.html).
 
 ## Project Setup
 

@@ -1,23 +1,19 @@
 # electron-app
 
-An Electron application with React and TypeScript
-
-## Recommended IDE Setup
-
-- [VSCode](https://code.visualstudio.com/) + [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) + [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
+A standalone app version of the _tz_ app.
 
 ## Project Setup
 
 ### Install
 
 ```bash
-$ pnpm install
+pnpm install
 ```
 
 ### Development
 
 ```bash
-$ pnpm dev
+pnpm dev
 ```
 
 ### Build
