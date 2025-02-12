@@ -3,12 +3,22 @@
   "version": "1.0.0",
   "main": "src/index.ts",
   "dependencies": {
+    "@tailwindcss/postcss": "^4.0.6",
+    "maplibre-gl": "^5.1.0",
+    "postcss": "^8.5.2",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "tailwindcss": "^4.0.6"
   },
   "devDependencies": {
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
     "typescript": "^5.7.3"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./styles.css": "./src/styles.css",
+    "./tailwind.config": "./tailwind.config.ts",
+    "./postcss.config": "./postcss.config.mjs"
   }
 }
