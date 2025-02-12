@@ -2,6 +2,7 @@ import { Map as MapImpl, NavigationControl, Marker } from "maplibre-gl";
 import { useEffect, useRef } from "react";
 import "maplibre-gl/dist/maplibre-gl.css";
 import timezoneData from "./ne_10m_time_zones.json";
+import ShadeMap from "mapbox-gl-shadow-simulator";
 
 export const Map = () => {
   const mapContainerRef = useRef(null!);
@@ -16,6 +17,25 @@ export const Map = () => {
     });
 
     map.addControl(new NavigationControl(), "top-right");
+
+    const shadeMap = new ShadeMap({
+      date: new Date(), // display shadows for current date
+      color: "#01112f", // shade color
+      opacity: 0.7, // opacity of shade color
+      apiKey: "XXXXXX", // obtain from https://shademap.app/about/
+      terrainSource: {
+        tileSize: 256, // DEM tile size
+        maxZoom: 15, // Maximum zoom of DEM tile set
+        getSourceUrl: ({ x, y, z }: { x: any; y: any; z: any }) => {
+          // return DEM tile url for given x,y,z coordinates
+          return `https://s3.amazonaws.com/elevation-tiles-prod/terrarium/${z}/${x}/${y}.png`;
+        },
+        getElevation: ({ r, g, b, a }: { r: any; g: any; b: any; a: any }) => {
+          // return elevation in meters for a given DEM tile pixel
+          return r * 256 + g + b / 256 - 32768;
+        },
+      } as any,
+    });
 
     map.on("load", () => {
       map.addSource("timezones", {
@@ -34,14 +54,23 @@ export const Map = () => {
         },
         filter: ["==", "$type", "Polygon"],
       });
-    });
 
-    new Marker({ color: "#FF0000" }).setLngLat([139.7525, 35.6846]).addTo(map);
+      shadeMap.addTo(map);
+
+      // advance shade by 1 hour
+      shadeMap.setDate(new Date(Date.now() + 1000 * 60 * 60));
+
+      // sometime later
+      // ...remove layer
+      // shadeMap.remove();
+    });
 
     return () => {
       map.remove();
     };
   }, []);
+
+  mapContainerRef.current;
 
   return <div ref={mapContainerRef} className="absolute size-full" />;
 };

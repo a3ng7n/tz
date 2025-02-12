@@ -4,6 +4,7 @@
   "main": "src/index.ts",
   "dependencies": {
     "@tailwindcss/postcss": "^4.0.6",
+    "mapbox-gl-shadow-simulator": "^0.60.0",
     "maplibre-gl": "^5.1.0",
     "postcss": "^8.5.2",
     "react": "^19.0.0",

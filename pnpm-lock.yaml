@@ -145,6 +145,9 @@ importers:
       '@tailwindcss/postcss':
         specifier: ^4.0.6
         version: 4.0.6
+      mapbox-gl-shadow-simulator:
+        specifier: ^0.60.0
+        version: 0.60.0
       maplibre-gl:
         specifier: ^5.1.0
         version: 5.1.0
@@ -2372,6 +2375,9 @@ packages:
   magic-string@0.30.17:
     resolution: {integrity: sha512-sNPKHvyjVf7gyjwS4xGTaW/mCnF8wnjtifKBEhxfZ7E/S8tQ0rssrwGNn6q8JH/ohItJfSQp9mBtQYuTlH5QnA==}
 
+  mapbox-gl-shadow-simulator@0.60.0:
+    resolution: {integrity: sha512-n0XhT1dUE3EtGd9SUnGCCBsZaaEcgeV9oVbtwaQCFtqQyzDF/UHhjPACkcjAeOEWecMuhtNewgnFcOkMhx2rUw==}
+
   maplibre-gl@5.1.0:
     resolution: {integrity: sha512-6lbf7qAnqAVm1T/vJBMmRtP+g8G/O/Z52IBtWX31SbFj7sEdlrk4YugxJen8IdV/pFjLFnDOw7HiHZl5nYdVjg==}
     engines: {node: '>=16.14.0', npm: '>=8.1.0'}
@@ -2895,6 +2901,9 @@ packages:
   sumchecker@3.0.1:
     resolution: {integrity: sha512-MvjXzkz/BOfyVDkG0oFOtBxHX2u3gKbMHIF/dXblZsgD3BWOFLmHovIpZY7BykJdAjcqRCBi1WYBNdEC9yI7vg==}
     engines: {node: '>= 8.0'}
+
+  suncalc@1.9.0:
+    resolution: {integrity: sha512-vMJ8Byp1uIPoj+wb9c1AdK4jpkSKVAywgHX0lqY7zt6+EWRRC3Z+0Ucfjy/0yxTVO1hwwchZe4uoFNqrIC24+A==}
 
   supercluster@8.0.1:
     resolution: {integrity: sha512-IiOea5kJ9iqzD2t7QJq/cREyLHTtSmUT6gQsweojg9WH2sYJqZK9SswTu6jrscO6D1G5v5vYZ9ru/eq85lXeZQ==}
@@ -5710,6 +5719,10 @@ snapshots:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.0
 
+  mapbox-gl-shadow-simulator@0.60.0:
+    dependencies:
+      suncalc: 1.9.0
+
   maplibre-gl@5.1.0:
     dependencies:
       '@mapbox/geojson-rewind': 0.5.2
@@ -6308,6 +6321,8 @@ snapshots:
       debug: 4.4.0
     transitivePeerDependencies:
       - supports-color
+
+  suncalc@1.9.0: {}
 
   supercluster@8.0.1:
     dependencies:
