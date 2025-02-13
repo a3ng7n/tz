@@ -1,11 +1,36 @@
-import { Map as MapImpl, NavigationControl, Marker } from "maplibre-gl";
-import { useEffect, useRef } from "react";
+import {
+  Map as MapImpl,
+  NavigationControl,
+  CameraUpdateTransformFunction,
+} from "maplibre-gl";
+import { useCallback, useEffect, useRef } from "react";
 import "maplibre-gl/dist/maplibre-gl.css";
 import timezoneData from "./ne_10m_time_zones.json";
 import ShadeMap from "mapbox-gl-shadow-simulator";
+import { useUIState } from "./store";
+import { useShallow } from "zustand/react/shallow";
 
-export const Map = () => {
-  const mapContainerRef = useRef(null!);
+export function Map() {
+  const mapContainerRef = useRef<HTMLDivElement>(null!);
+
+  const { time, setMapZoom, setCenter, setBounds, setCanvasSize } = useUIState(
+    useShallow((state) => ({
+      time: state.time,
+      setMapZoom: state.setMapZoom,
+      setCenter: state.setCenter,
+      setBounds: state.setBounds,
+      setCanvasSize: state.setCanvasSize,
+    })),
+  );
+
+  const camUpdate: CameraUpdateTransformFunction = useCallback(
+    (next) => {
+      setMapZoom(next.zoom);
+      setCenter(next.center);
+      return next;
+    },
+    [setMapZoom, setCenter],
+  );
 
   useEffect(() => {
     const map = new MapImpl({
@@ -14,6 +39,7 @@ export const Map = () => {
       center: [139.753, 35.6844],
       zoom: 14,
       attributionControl: false,
+      transformCameraUpdate: camUpdate,
     });
 
     map.addControl(new NavigationControl(), "top-right");
@@ -58,11 +84,23 @@ export const Map = () => {
       shadeMap.addTo(map);
 
       // advance shade by 1 hour
-      shadeMap.setDate(new Date(Date.now() + 1000 * 60 * 60));
+      shadeMap.setDate(time);
 
       // sometime later
       // ...remove layer
       // shadeMap.remove();
+    });
+
+    map.on("move", () => {
+      const bounds = map.getBounds();
+      const [lng1, lat1] = [bounds.getWest(), bounds.getSouth()];
+      const [lng2, lat2] = [bounds.getEast(), lat1]; // Use same latitude
+      setBounds([
+        { lng: lng1, lat: lat1 },
+        { lng: lng2, lat: lat2 },
+      ]);
+      const canvas = map.getCanvas();
+      setCanvasSize({ width: canvas.width, height: canvas.height });
     });
 
     return () => {
@@ -72,5 +110,9 @@ export const Map = () => {
 
   mapContainerRef.current;
 
-  return <div ref={mapContainerRef} className="absolute size-full" />;
-};
+  return (
+    <>
+      <div ref={mapContainerRef} className="absolute size-full" />
+    </>
+  );
+}
