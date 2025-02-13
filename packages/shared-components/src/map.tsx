@@ -32,8 +32,11 @@ export function Map() {
     [setMapZoom, setCenter],
   );
 
+  const mapRef = useRef<MapImpl>(null!);
+  const shadeRef = useRef<ShadeMap>(null!);
+
   useEffect(() => {
-    const map = new MapImpl({
+    mapRef.current = new MapImpl({
       container: mapContainerRef.current,
       style: "https://demotiles.maplibre.org/style.json", // style URL
       center: [139.753, 35.6844],
@@ -42,9 +45,7 @@ export function Map() {
       transformCameraUpdate: camUpdate,
     });
 
-    map.addControl(new NavigationControl(), "top-right");
-
-    const shadeMap = new ShadeMap({
+    shadeRef.current = new ShadeMap({
       date: new Date(), // display shadows for current date
       color: "#01112f", // shade color
       opacity: 0.7, // opacity of shade color
@@ -62,6 +63,11 @@ export function Map() {
         },
       } as any,
     });
+
+    const map = mapRef.current;
+    const shadeMap = shadeRef.current;
+
+    map.addControl(new NavigationControl(), "top-right");
 
     map.on("load", () => {
       map.addSource("timezones", {
@@ -82,13 +88,6 @@ export function Map() {
       });
 
       shadeMap.addTo(map);
-
-      // advance shade by 1 hour
-      shadeMap.setDate(time);
-
-      // sometime later
-      // ...remove layer
-      // shadeMap.remove();
     });
 
     map.on("move", () => {
@@ -104,11 +103,12 @@ export function Map() {
     });
 
     return () => {
+      shadeMap.remove();
       map.remove();
     };
   }, []);
 
-  mapContainerRef.current;
+  if (shadeRef.current !== null) shadeRef.current.setDate(time);
 
   return (
     <>
