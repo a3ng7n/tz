@@ -13,7 +13,8 @@ const config = defineConfig({
   renderer: {
     resolve: {
       alias: {
-        '@renderer': resolve('src/renderer/src')
+        '@renderer': resolve('src/renderer/src'),
+        '@': resolve(__dirname, '../../packages/shared-components/src')
       }
     },
     plugins: [react(), tailwindcss()]
