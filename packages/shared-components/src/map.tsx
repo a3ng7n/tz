@@ -8,6 +8,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import timezoneData from "./ne_10m_time_zones.json";
 import ShadeMap from "mapbox-gl-shadow-simulator";
 import { useUIState } from "./ui-store";
+import { useSettings } from "./settings-store";
 import { useShallow } from "zustand/react/shallow";
 
 export function Map() {
@@ -21,6 +22,10 @@ export function Map() {
       setBounds: state.setBounds,
       setCanvasSize: state.setCanvasSize,
     })),
+  );
+
+  const { showTZOutlines } = useSettings(
+    useShallow((state) => ({ showTZOutlines: state.showTZOutlines })),
   );
 
   const camUpdate: CameraUpdateTransformFunction = useCallback(
@@ -119,6 +124,13 @@ export function Map() {
   }, []);
 
   if (shadeRef.current !== null) shadeRef.current.setDate(time);
+
+  if (mapRef.current !== null)
+    mapRef.current.setLayoutProperty(
+      "timezone-boundaries",
+      "visibility",
+      showTZOutlines ? "visible" : "none",
+    );
 
   return (
     <>
