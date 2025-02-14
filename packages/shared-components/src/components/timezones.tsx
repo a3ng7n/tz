@@ -2,6 +2,7 @@ import { useShallow } from "zustand/react/shallow";
 import { useUIState } from "@/ui-store";
 import { useMemo } from "react";
 import { useSettings } from "@/settings-store";
+import { cn } from "@/lib/utils";
 
 /**
  * converts a numerical offset into one that `DateTimeFormat` is happy with
@@ -126,15 +127,21 @@ export function Timezones() {
   }
 
   return (
-    <div className="relative flex flex-row overflow-hidden w-full flex-none pointer-events-none">
+    <div className="relative flex flex-row overflow-hidden w-full flex-none pointer-events-none h-10">
       {incTzs.map((tz, idx) => {
         return (
           <div
             key={`tz-${idx}`}
-            className="border overflow-hidden shrink-0 text-center align-middle text-nowrap"
+            className={cn(
+              "@container flex items-center justify-center",
+              "border overflow-hidden shrink-0 self-center h-full text-center",
+              mod(tz.offset, 2) === 0 ? "bg-current/20" : "",
+            )}
             style={{ width: !isNaN(tz.width) ? tz.width : 0 }}
           >
-            {tz.formatter[zoneTimeFormat].format(time)}
+            <div className="text-xs @min-[50px]:text-base @min-[32px]:@max-[50px]:text-sm">
+              {tz.formatter[zoneTimeFormat].format(time)}
+            </div>
           </div>
         );
       })}
