@@ -1,8 +1,8 @@
-import { LngLatLike, Size } from "maplibre-gl";
+import { Size } from "maplibre-gl";
 import { Dispatch, SetStateAction } from "react";
 import { create, StateCreator } from "zustand";
 
-interface LatLng {
+export interface LatLng {
   lat: number;
   lng: number;
 }
@@ -20,7 +20,7 @@ interface UIState {
   setCanvasSize: Dispatch<SetStateAction<Size>>;
 }
 
-const uiStateCreator: StateCreator<UIState, [], []> = (set, get, _) => ({
+const uiStateCreator: StateCreator<UIState, [], []> = (set, _) => ({
   time: new Date(Date.now()),
   setTime: (payload) => {
     set((prev) => {

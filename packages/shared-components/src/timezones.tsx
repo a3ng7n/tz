@@ -21,9 +21,14 @@ const offsetToTzString = (offset: number) => {
   }
 };
 
+const tileSizePix: number = 512;
 const tzWidthDeg: number = 360 / 24;
-const tzs: { offset: number; timeZone: string; bounds: [number, number] }[] =
-  [];
+interface TZ {
+  offset: number;
+  timeZone: string;
+  bounds: [number, number];
+}
+const tzs: TZ[] = [];
 for (let i = 0; i <= 24; i++) {
   const offset = i - 12;
   if (offset === -12) {
@@ -67,8 +72,14 @@ function calcTime(d: Date, offset: number) {
   return nd;
 }
 
+const mod = (n: number, d: number) => ((n % d) + d) % d;
+const constrain = (n: number, min: number, max: number) => {
+  const range = Math.abs(max - min);
+  return mod(n - min, range) + min;
+};
+
 export function Timezones() {
-  const { bounds, canvasSize, time } = useUIState(
+  const { mapZoom, bounds, canvasSize, time } = useUIState(
     useShallow((state) => ({
       mapZoom: state.mapZoom,
       center: state.center,
@@ -78,49 +89,66 @@ export function Timezones() {
     })),
   );
 
+  const widthTiles = canvasSize.width / tileSizePix / Math.pow(2, mapZoom);
+  const widthDeg = widthTiles * 360;
+
+  const boundsCon = bounds.map((b) => ({
+    ...b,
+    lng: constrain(b.lng, -180, 180),
+  }));
+
   // calculate the canvas width's current ratio of pixels to degree
   const pxPerDeg = useMemo(() => {
-    const widthDeg = Math.abs(bounds[1].lng - bounds[0].lng);
     return canvasSize.width / widthDeg;
   }, [canvasSize, bounds]);
 
-  const incTzs = useMemo(
-    () =>
-      tzs
-        // find only the timezones that have any part within the canvas
-        .filter(
-          (tz) =>
-            (tz.bounds[0] > bounds[0].lng || tz.bounds[1] > bounds[0].lng) &&
-            (tz.bounds[0] < bounds[1].lng || tz.bounds[1] < bounds[1].lng),
-        )
-        // recalculate their bounds if they are clipped by the canvas
-        .map((tz) => {
-          const tzStart =
-            tz.bounds[0] <= bounds[0].lng ? bounds[0].lng : tz.bounds[0];
-          const tzEnd =
-            tz.bounds[1] >= bounds[1].lng ? bounds[1].lng : tz.bounds[1];
-          return { ...tz, bounds: [tzStart, tzEnd] };
-        })
-        // calculate the width in pixels for each timezone
-        .map((tz) => ({
-          ...tz,
-          width: Math.abs(tz.bounds[1] - tz.bounds[0]) * pxPerDeg,
-        })),
-    [tzs, bounds, pxPerDeg],
+  const initTz = tzs.find(
+    (tz) => tz.bounds[0] <= boundsCon[0].lng && tz.bounds[1] > boundsCon[0].lng,
   );
+
+  const incTzs: (TZ & { width: number })[] = [];
+  if (initTz !== undefined) {
+    let lng0 = bounds[0].lng;
+    const lngLimit = bounds[0].lng + widthDeg;
+    let idx = initTz.offset + 12;
+    let first = true;
+
+    while (lng0 <= lngLimit) {
+      const tz = tzs[idx];
+
+      const bound0 = lng0;
+
+      const tzNomRange = Math.abs(tz.bounds[1] - constrain(bound0, -180, 180));
+
+      const bound1abs = tzNomRange + lng0;
+
+      const bound1 = bound1abs > lngLimit ? lngLimit : bound1abs;
+
+      incTzs.push({
+        ...tz,
+        bounds: [bound0, bound1],
+        width: Math.abs(bound1 - bound0) * pxPerDeg,
+      });
+
+      lng0 = lng0 + tzNomRange;
+      idx = (idx + 1) % 25;
+      first = false;
+    }
+  }
 
   return (
     <div className="relative flex flex-row overflow-hidden w-full flex-none pointer-events-none">
-      {incTzs.map((tz) => {
+      {incTzs.map((tz, idx) => {
         const offsetTime = calcTime(time, tz.offset);
         return (
           <div
-            key={tz.offset}
+            key={`tz-${idx}`}
             className="border overflow-hidden shrink-0 text-center align-middle text-nowrap"
             style={{ width: tz.width }}
           >
             {offsetTime.toLocaleTimeString(navigator.language, {
               timeZone: tz.timeZone,
+              timeStyle: "short",
             })}
           </div>
         );

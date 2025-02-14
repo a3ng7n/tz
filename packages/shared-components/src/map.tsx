@@ -57,7 +57,17 @@ export function Map() {
           // return DEM tile url for given x,y,z coordinates
           return `https://s3.amazonaws.com/elevation-tiles-prod/terrarium/${z}/${x}/${y}.png`;
         },
-        getElevation: ({ r, g, b, a }: { r: any; g: any; b: any; a: any }) => {
+        getElevation: ({
+          r,
+          g,
+          b,
+          a: _,
+        }: {
+          r: any;
+          g: any;
+          b: any;
+          a: any;
+        }) => {
           // return elevation in meters for a given DEM tile pixel
           return r * 256 + g + b / 256 - 32768;
         },
@@ -93,7 +103,7 @@ export function Map() {
     map.on("move", () => {
       const bounds = map.getBounds();
       const [lng1, lat1] = [bounds.getWest(), bounds.getSouth()];
-      const [lng2, lat2] = [bounds.getEast(), lat1]; // Use same latitude
+      const [lng2, lat2] = [bounds.getEast(), bounds.getNorth()];
       setBounds([
         { lng: lng1, lat: lat1 },
         { lng: lng2, lat: lat2 },
