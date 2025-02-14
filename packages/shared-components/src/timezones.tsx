@@ -63,7 +63,7 @@ function calcTime(d: Date, offset: number) {
   // create Date object for current location
 
   // get UTC time in msec
-  var utc = d.getTime();
+  var utc = d.getTime() + d.getTimezoneOffset() * 60 * 1000;
 
   // create new Date object for different city
   // using supplied offset
@@ -149,6 +149,7 @@ export function Timezones() {
             {offsetTime.toLocaleTimeString(navigator.language, {
               timeZone: tz.timeZone,
               timeStyle: "short",
+              hour12: false,
             })}
           </div>
         );
