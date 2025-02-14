@@ -25,8 +25,8 @@ const tileSizePix: number = 512;
 const tzWidthDeg: number = 360 / 24;
 interface TZ {
   offset: number;
-  timeZone: string;
   bounds: [number, number];
+  formatter: Intl.DateTimeFormat;
 }
 const tzs: TZ[] = [];
 for (let i = 0; i <= 24; i++) {
@@ -34,42 +34,34 @@ for (let i = 0; i <= 24; i++) {
   if (offset === -12) {
     tzs.push({
       offset,
-      timeZone: offsetToTzString(offset),
       bounds: [-180, -180 + tzWidthDeg / 2],
+      formatter: new Intl.DateTimeFormat(navigator.language, {
+        timeZone: offsetToTzString(offset),
+        timeStyle: "short",
+        hour12: false,
+      }),
     });
   } else if (offset === 12) {
     tzs.push({
       offset,
-      timeZone: offsetToTzString(offset),
       bounds: [tzs[i - 1].bounds[1], 180],
+      formatter: new Intl.DateTimeFormat(navigator.language, {
+        timeZone: offsetToTzString(offset),
+        timeStyle: "short",
+        hour12: false,
+      }),
     });
   } else {
     tzs.push({
       offset,
-      timeZone: offsetToTzString(offset),
       bounds: [tzs[i - 1].bounds[1], tzs[i - 1].bounds[1] + tzWidthDeg],
+      formatter: new Intl.DateTimeFormat(navigator.language, {
+        timeZone: offsetToTzString(offset),
+        timeStyle: "short",
+        hour12: false,
+      }),
     });
   }
-}
-
-/**
- * calculate time in a different location by
- * its offset
- * @param d - current date/time
- * @param offset - number of hours to offset `d` by
- * @returns a new `Date` of `d` offset by `offset`
- */
-function calcTime(d: Date, offset: number) {
-  // create Date object for current location
-
-  // get UTC time in msec
-  var utc = d.getTime() + d.getTimezoneOffset() * 60 * 1000;
-
-  // create new Date object for different city
-  // using supplied offset
-  var nd = new Date(utc + 3600000 * offset);
-
-  return nd;
 }
 
 const mod = (n: number, d: number) => ((n % d) + d) % d;
@@ -137,18 +129,13 @@ export function Timezones() {
   return (
     <div className="relative flex flex-row overflow-hidden w-full flex-none pointer-events-none">
       {incTzs.map((tz, idx) => {
-        const offsetTime = calcTime(time, tz.offset);
         return (
           <div
             key={`tz-${idx}`}
             className="border overflow-hidden shrink-0 text-center align-middle text-nowrap"
             style={{ width: tz.width }}
           >
-            {offsetTime.toLocaleTimeString(navigator.language, {
-              timeZone: tz.timeZone,
-              timeStyle: "short",
-              hour12: false,
-            })}
+            {tz.formatter.format(time)}
           </div>
         );
       })}
