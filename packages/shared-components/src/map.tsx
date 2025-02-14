@@ -39,8 +39,8 @@ export function Map() {
     mapRef.current = new MapImpl({
       container: mapContainerRef.current,
       style: "https://demotiles.maplibre.org/style.json", // style URL
-      center: [139.753, 35.6844],
-      zoom: 14,
+      center: [0, 0],
+      zoom: 0,
       attributionControl: false,
       transformCameraUpdate: camUpdate,
     });
