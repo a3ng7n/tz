@@ -1,5 +1,5 @@
 import { useShallow } from "zustand/react/shallow";
-import { useUIState } from "./store";
+import { useUIState } from "./ui-store";
 import { useMemo } from "react";
 
 /**

@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useUIState } from "./store";
+import { useUIState } from "./ui-store";
 import { useShallow } from "zustand/react/shallow";
 
 export function Times() {

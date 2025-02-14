@@ -7,7 +7,7 @@ import { useCallback, useEffect, useRef } from "react";
 import "maplibre-gl/dist/maplibre-gl.css";
 import timezoneData from "./ne_10m_time_zones.json";
 import ShadeMap from "mapbox-gl-shadow-simulator";
-import { useUIState } from "./store";
+import { useUIState } from "./ui-store";
 import { useShallow } from "zustand/react/shallow";
 
 export function Map() {
