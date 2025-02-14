@@ -1,6 +1,7 @@
 import { useShallow } from "zustand/react/shallow";
-import { useUIState } from "./ui-store";
+import { useUIState } from "@/ui-store";
 import { useMemo } from "react";
+import { useSettings } from "@/settings-store";
 
 /**
  * converts a numerical offset into one that `DateTimeFormat` is happy with
@@ -26,42 +27,36 @@ const tzWidthDeg: number = 360 / 24;
 interface TZ {
   offset: number;
   bounds: [number, number];
-  formatter: Intl.DateTimeFormat;
+  formatter: { "12h": Intl.DateTimeFormat; "24h": Intl.DateTimeFormat };
 }
 const tzs: TZ[] = [];
 for (let i = 0; i <= 24; i++) {
   const offset = i - 12;
+  let bounds: [number, number] = [0, 0];
   if (offset === -12) {
-    tzs.push({
-      offset,
-      bounds: [-180, -180 + tzWidthDeg / 2],
-      formatter: new Intl.DateTimeFormat(navigator.language, {
-        timeZone: offsetToTzString(offset),
-        timeStyle: "short",
-        hour12: false,
-      }),
-    });
+    bounds = [-180, -180 + tzWidthDeg / 2];
   } else if (offset === 12) {
-    tzs.push({
-      offset,
-      bounds: [tzs[i - 1].bounds[1], 180],
-      formatter: new Intl.DateTimeFormat(navigator.language, {
-        timeZone: offsetToTzString(offset),
-        timeStyle: "short",
-        hour12: false,
-      }),
-    });
+    bounds = [tzs[i - 1].bounds[1], 180];
   } else {
-    tzs.push({
-      offset,
-      bounds: [tzs[i - 1].bounds[1], tzs[i - 1].bounds[1] + tzWidthDeg],
-      formatter: new Intl.DateTimeFormat(navigator.language, {
+    bounds = [tzs[i - 1].bounds[1], tzs[i - 1].bounds[1] + tzWidthDeg];
+  }
+
+  tzs.push({
+    offset,
+    bounds: bounds,
+    formatter: {
+      "12h": new Intl.DateTimeFormat(navigator.language, {
+        timeZone: offsetToTzString(offset),
+        timeStyle: "short",
+        hour12: true,
+      }),
+      "24h": new Intl.DateTimeFormat(navigator.language, {
         timeZone: offsetToTzString(offset),
         timeStyle: "short",
         hour12: false,
       }),
-    });
-  }
+    },
+  });
 }
 
 const mod = (n: number, d: number) => ((n % d) + d) % d;
@@ -79,6 +74,10 @@ export function Timezones() {
       canvasSize: state.canvasSize,
       time: state.time,
     })),
+  );
+
+  const { zoneTimeFormat } = useSettings(
+    useShallow((state) => ({ zoneTimeFormat: state.zoneTimeFormat })),
   );
 
   const widthTiles = canvasSize.width / tileSizePix / Math.pow(2, mapZoom);
@@ -133,9 +132,9 @@ export function Timezones() {
           <div
             key={`tz-${idx}`}
             className="border overflow-hidden shrink-0 text-center align-middle text-nowrap"
-            style={{ width: tz.width }}
+            style={{ width: !isNaN(tz.width) ? tz.width : 0 }}
           >
-            {tz.formatter.format(time)}
+            {tz.formatter[zoneTimeFormat].format(time)}
           </div>
         );
       })}

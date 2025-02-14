@@ -2,7 +2,7 @@ import { Banner } from "./components/banner";
 import { ThemeProvider } from "./components/theme-provider";
 import { Map } from "./map";
 import { Times } from "./times";
-import { Timezones } from "./timezones";
+import { Timezones } from "./components/timezones";
 
 export const Main = () => {
   return (
