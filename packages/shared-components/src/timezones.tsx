@@ -111,7 +111,6 @@ export function Timezones() {
     let lng0 = bounds[0].lng;
     const lngLimit = bounds[0].lng + widthDeg;
     let idx = initTz.offset + 12;
-    let first = true;
 
     while (lng0 <= lngLimit) {
       const tz = tzs[idx];
@@ -132,7 +131,6 @@ export function Timezones() {
 
       lng0 = lng0 + tzNomRange;
       idx = (idx + 1) % 25;
-      first = false;
     }
   }
 
