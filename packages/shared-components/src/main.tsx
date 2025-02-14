@@ -1,13 +1,19 @@
+import { Banner } from "./components/banner";
+import { ThemeProvider } from "./components/theme-provider";
 import { Map } from "./map";
 import { Times } from "./times";
 import { Timezones } from "./timezones";
 
 export const Main = () => {
   return (
-    <div className="h-svh w-svw flex flex-col">
-      <Times />
-      <Timezones />
-      <Map />
-    </div>
+    <ThemeProvider>
+      <div className="h-svh w-svw flex flex-col">
+        <Banner>
+          <Times />
+        </Banner>
+        <Timezones />
+        <Map />
+      </div>
+    </ThemeProvider>
   );
 };
