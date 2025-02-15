@@ -4,10 +4,6 @@
   "compilerOptions": {
     "outDir": "dist",
     "declaration": true,
-    "resolveJsonModule": true,
-    // "baseUrl": "./",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
+    "resolveJsonModule": true
   }
 }

@@ -11,7 +11,8 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
-      "@tz/shared-components": ["packages/shared-components/src"]
+      "@tz/shared-components": ["packages/shared-components/src"],
+      "@/*": ["./packages/shared-components/src/*"]
     }
   }
 }

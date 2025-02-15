@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useUIState } from "./store";
+import { useUIState } from "./ui-store";
 import { useShallow } from "zustand/react/shallow";
 
 export function Times() {
@@ -13,5 +13,9 @@ export function Times() {
     return () => clearInterval(interval);
   });
 
-  return <>{time.toString()}</>;
+  return (
+    <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight self-center">
+      {time.toString()}
+    </h3>
+  );
 }
