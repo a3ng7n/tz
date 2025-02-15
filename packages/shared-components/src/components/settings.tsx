@@ -82,30 +82,32 @@ export const Settings: FC<ComponentProps<"div">> = ({
             </DropdownMenuPortal>
           </DropdownMenuSub>
 
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger>Map Texture</DropdownMenuSubTrigger>
-            <DropdownMenuPortal>
-              <DropdownMenuSubContent>
-                <DropdownMenuRadioGroup
-                  value={mapTexture}
-                  onValueChange={setMapTexture as any}
-                >
-                  <DropdownMenuRadioItem
-                    value="colorful"
-                    onSelect={(e) => e.preventDefault()}
+          {false ? (
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>Map Texture</DropdownMenuSubTrigger>
+              <DropdownMenuPortal>
+                <DropdownMenuSubContent>
+                  <DropdownMenuRadioGroup
+                    value={mapTexture}
+                    onValueChange={setMapTexture as any}
                   >
-                    Default
-                  </DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem
-                    value="terrain"
-                    onSelect={(e) => e.preventDefault()}
-                  >
-                    Terrain
-                  </DropdownMenuRadioItem>
-                </DropdownMenuRadioGroup>
-              </DropdownMenuSubContent>
-            </DropdownMenuPortal>
-          </DropdownMenuSub>
+                    <DropdownMenuRadioItem
+                      value="colorful"
+                      onSelect={(e) => e.preventDefault()}
+                    >
+                      Default
+                    </DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem
+                      value="terrain"
+                      onSelect={(e) => e.preventDefault()}
+                    >
+                      Terrain
+                    </DropdownMenuRadioItem>
+                  </DropdownMenuRadioGroup>
+                </DropdownMenuSubContent>
+              </DropdownMenuPortal>
+            </DropdownMenuSub>
+          ) : null}
 
           <DropdownMenuCheckboxItem
             checked={showTZOutlines}
