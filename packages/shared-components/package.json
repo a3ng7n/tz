@@ -13,6 +13,7 @@
     "lucide-react": "^0.475.0",
     "mapbox-gl-shadow-simulator": "^0.60.0",
     "maplibre-gl": "^5.1.0",
+    "maplibre-theme": "^0.2.0",
     "postcss": "^8.5.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -22,6 +23,7 @@
     "zustand": "^5.0.3"
   },
   "devDependencies": {
+    "@types/geojson": "^7946.0.16",
     "@types/node": "^20.14.8",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",

@@ -175,6 +175,9 @@ importers:
       maplibre-gl:
         specifier: ^5.1.0
         version: 5.1.0
+      maplibre-theme:
+        specifier: ^0.2.0
+        version: 0.2.0
       postcss:
         specifier: ^8.5.2
         version: 8.5.2
@@ -197,6 +200,9 @@ importers:
         specifier: ^5.0.3
         version: 5.0.3(@types/react@19.0.8)(react@19.0.0)
     devDependencies:
+      '@types/geojson':
+        specifier: ^7946.0.16
+        version: 7946.0.16
       '@types/node':
         specifier: ^20.14.8
         version: 20.17.17
@@ -2765,6 +2771,9 @@ packages:
   maplibre-gl@5.1.0:
     resolution: {integrity: sha512-6lbf7qAnqAVm1T/vJBMmRtP+g8G/O/Z52IBtWX31SbFj7sEdlrk4YugxJen8IdV/pFjLFnDOw7HiHZl5nYdVjg==}
     engines: {node: '>=16.14.0', npm: '>=8.1.0'}
+
+  maplibre-theme@0.2.0:
+    resolution: {integrity: sha512-yeIc+Wwv53DyPk3yixHMa4a8w6Knl0+aEMUK0I8PBkAWY8dDk4oMT+l9soiKTf01fEMv4yvcxxey03UoX3QMWQ==}
 
   matcher@3.0.0:
     resolution: {integrity: sha512-OkeDaAZ/bQCxeFAozM55PKcKU0yJMPGifLwV4Qgjitu+5MoAfSQN4lsLJeXZ1b8w0x+/Emda6MZgXS1jvsapng==}
@@ -6507,6 +6516,8 @@ snapshots:
       supercluster: 8.0.1
       tinyqueue: 3.0.0
       vt-pbf: 3.1.3
+
+  maplibre-theme@0.2.0: {}
 
   matcher@3.0.0:
     dependencies:
