@@ -4,12 +4,15 @@ import {
   CameraUpdateTransformFunction,
 } from "maplibre-gl";
 import { useCallback, useEffect, useRef } from "react";
-import "maplibre-gl/dist/maplibre-gl.css";
+import "maplibre-theme/icons.lucide.css";
+import "maplibre-theme/modern.css";
 import timezoneData from "./ne_10m_time_zones.json";
 import ShadeMap from "mapbox-gl-shadow-simulator";
 import { useUIState } from "./ui-store";
 import { useSettings } from "./settings-store";
 import { useShallow } from "zustand/react/shallow";
+import { useTheme } from "./components/theme-provider";
+import { darkStyle, lightStyle } from "./lib/map-styles";
 
 export function Map() {
   const mapContainerRef = useRef<HTMLDivElement>(null!);
@@ -28,6 +31,8 @@ export function Map() {
     useShallow((state) => ({ showTZOutlines: state.showTZOutlines })),
   );
 
+  const { resolvedTheme } = useTheme();
+
   const camUpdate: CameraUpdateTransformFunction = useCallback(
     (next) => {
       setMapZoom(next.zoom);
@@ -43,7 +48,7 @@ export function Map() {
   useEffect(() => {
     mapRef.current = new MapImpl({
       container: mapContainerRef.current,
-      style: "https://demotiles.maplibre.org/style.json", // style URL
+      style: lightStyle,
       center: [0, 0],
       zoom: 0,
       attributionControl: false,
@@ -84,27 +89,6 @@ export function Map() {
 
     map.addControl(new NavigationControl(), "top-right");
 
-    map.on("load", () => {
-      map.addSource("timezones", {
-        type: "geojson",
-        data: timezoneData as any,
-      });
-
-      map.addLayer({
-        id: "timezone-boundaries",
-        type: "fill",
-        source: "timezones",
-        paint: {
-          "fill-color": "#88888800",
-          "fill-opacity": 1.0,
-          "fill-outline-color": "#000000",
-        },
-        filter: ["==", "$type", "Polygon"],
-      });
-
-      shadeMap.addTo(map);
-    });
-
     map.on("move", () => {
       const bounds = map.getBounds();
       const [lng1, lat1] = [bounds.getWest(), bounds.getSouth()];
@@ -123,14 +107,78 @@ export function Map() {
     };
   }, []);
 
-  if (shadeRef.current !== null) shadeRef.current.setDate(time);
+  if (shadeRef.current !== null) {
+    shadeRef.current.setDate(time);
+  }
 
-  if (mapRef.current !== null)
-    mapRef.current.setLayoutProperty(
-      "timezone-boundaries",
-      "visibility",
-      showTZOutlines ? "visible" : "none",
-    );
+  useEffect(() => {
+    if (mapRef.current !== null) {
+      const baseStyle = { light: lightStyle, dark: darkStyle }[resolvedTheme];
+
+      const prevOutlineVisibility = mapRef.current.getLayer(
+        "timezone-boundaries",
+      )?.visibility;
+
+      const addAfter = () => {
+        mapRef.current.off("styledata", addAfter);
+        shadeRef.current.addTo(mapRef.current);
+        shadeRef.current.setColor(
+          { light: "#01112f", dark: "#01082d" }[resolvedTheme],
+        ); // shade color
+        shadeRef.current.setOpacity({ light: 0.7, dark: 0.8 }[resolvedTheme]); // opacity of shade color
+        mapRef.current.setLayoutProperty(
+          "timezone-boundaries",
+          "visibility",
+          prevOutlineVisibility,
+        );
+      };
+
+      shadeRef.current.remove();
+      mapRef.current.on("styledata", addAfter);
+
+      mapRef.current.setStyle(
+        {
+          ...baseStyle,
+          layers: [
+            ...baseStyle.layers,
+            {
+              id: "timezone-boundaries",
+              type: "fill",
+              source: "timezones",
+              paint: {
+                "fill-color": "#88888800",
+                "fill-opacity": { light: 1.0, dark: 0.35 }[resolvedTheme],
+                "fill-outline-color": { light: "#000000", dark: "#FFFFFF" }[
+                  resolvedTheme
+                ],
+              },
+              filter: ["==", "$type", "Polygon"],
+            },
+          ],
+          sources: {
+            ...baseStyle.sources,
+            timezones: {
+              type: "geojson",
+              data: timezoneData as any,
+            },
+          },
+        },
+
+        { diff: true },
+      );
+    }
+  }, [resolvedTheme]);
+
+  useEffect(() => {
+    if (mapRef.current !== null) {
+      if (mapRef.current.getLayer("timezone-boundaries"))
+        mapRef.current.setLayoutProperty(
+          "timezone-boundaries",
+          "visibility",
+          showTZOutlines ? "visible" : "none",
+        );
+    }
+  }, [showTZOutlines]);
 
   return (
     <>
